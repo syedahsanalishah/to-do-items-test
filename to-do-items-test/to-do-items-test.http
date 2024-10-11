@@ -1,0 +1,6 @@
+@to_do_items_test_HostAddress = http://localhost:5188
+
+GET {{to_do_items_test_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
