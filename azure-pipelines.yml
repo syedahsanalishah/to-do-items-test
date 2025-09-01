@@ -1,8 +1,8 @@
 trigger:
-- to-do-iteams-test
+- to-do-iteams-test-branch
 
 pool:
-  vmImage: 'windows-2022'   # ✅ Explicit image (avoid migration warning)
+  vmImage: 'windows-2022'
 
 variables:
   solution: '**/*.sln'
@@ -10,6 +10,12 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'             # Use the matching SDK version
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -29,10 +35,9 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-# ✅ Better test step with logging enabled
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    diagnosticsEnabled: true          # Extra logs if tests fail
-    otherConsoleOptions: '/blame'     # Helps identify flaky/null-reference tests
+    diagnosticsEnabled: true
+    otherConsoleOptions: '/blame'
