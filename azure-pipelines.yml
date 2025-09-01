@@ -1,13 +1,8 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - to-do-iteams-test-branch
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2022'   # ✅ Explicit image (avoid migration warning)
 
 variables:
   solution: '**/*.sln'
@@ -24,11 +19,20 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    msbuildArgs: >
+      /p:DeployOnBuild=true 
+      /p:WebPublishMethod=Package 
+      /p:PackageAsSingleFile=true 
+      /p:SkipInvalidConfigurations=true 
+      /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" 
+      /p:DeployIisAppPath="Default Web Site"
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+# ✅ Better test step with logging enabled
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    diagnosticsEnabled: true          # Extra logs if tests fail
+    otherConsoleOptions: '/blame'     # Helps identify flaky/null-reference tests
