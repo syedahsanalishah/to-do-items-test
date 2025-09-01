@@ -1,5 +1,5 @@
 trigger:
-- to-do-iteams-test-branch
+- to-do-iteams-test
 
 pool:
   vmImage: 'windows-2022'   # ✅ Explicit image (avoid migration warning)
