@@ -12,7 +12,12 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
-
+- task: AzureRmWebAppDeployment@5
+  inputs:
+    ConnectionType: 'AzureRM'
+    appType: 'webApp'
+    WebAppName: 'ahsan'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
