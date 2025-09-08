@@ -28,7 +28,14 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+# --- THIS IS THE CORRECTED TASK ---
 - task: VSTest@2
   inputs:
+    # Add this section to explicitly find your test assemblies.
+    # This pattern finds all DLLs with 'test' in the name, but excludes adapters and intermediate files.
+    testAssemblyVer2: |
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
