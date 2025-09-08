@@ -1,0 +1,43 @@
+# This is the standard pipeline for modern .NET Core / .NET 5+ projects.
+
+trigger:
+- to-do-iteams-test-branch
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  # The location of your main web project. 
+  # IMPORTANT: Update this path if your main project is not in the root or has a different name.
+  projectPath: '**/to-do-items-test.csproj' 
+
+steps:
+# The 'dotnet build' command automatically restores NuGet packages first.
+- task: DotNetCoreCLI@2
+  displayName: 'Build the project'
+  inputs:
+    command: 'build'
+    projects: '$(projectPath)'
+    arguments: '--configuration $(buildConfiguration)'
+
+# The 'dotnet test' command finds and runs all tests in your solution.
+# It automatically builds the test projects if needed.
+- task: DotNetCoreCLI@2
+  displayName: 'Run tests'
+  inputs:
+    command: 'test'
+    # This pattern finds any project file inside a folder ending with 'Tests'.
+    # This is a very common and robust way to structure test projects.
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+# The 'dotnet publish' command prepares your application for deployment.
+- task: DotNetCoreCLI@2
+  displayName: 'Publish the application'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true # This is important for web applications
+    projects: '$(projectPath)'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true # Creates a single zip file, similar to the old pipeline's goal
